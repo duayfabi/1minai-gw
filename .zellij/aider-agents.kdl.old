@@ -1,0 +1,38 @@
+layout {
+  tab name="Aider Cockpit" {
+    pane split_direction="vertical" {
+
+      // Colonne gauche : PLAN
+      pane size="34%" {
+        name "PLAN"
+        command "fish"
+        args "-lc" "just agent-plan"
+      }
+
+      // Colonne droite : DEV / REVIEW / TEST
+      pane split_direction="horizontal" {
+
+        // Ligne 1 : DEV (plus grand)
+        pane size="50%" {
+          name "DEV"
+          command "fish"
+          args "-lc" "just agent-dev"
+        }
+
+        // Ligne 2 : REVIEW + TEST
+        pane split_direction="vertical" {
+          pane {
+            name "REVIEW"
+            command "fish"
+            args "-lc" "just agent-review"
+          }
+          pane {
+            name "TEST/CI"
+            command "fish"
+            args "-lc" "just agent-test"
+          }
+        }
+      }
+    }
+  }
+}
