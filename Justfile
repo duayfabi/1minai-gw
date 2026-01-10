@@ -28,7 +28,7 @@ agent-plan OBJECTIF: notes
   cat .aider/prompts/planner.md
   echo ""
   echo "Objectif: {{OBJECTIF}}"
-  end | aider --config .aider/plan.yml
+  end | aider --no-show-model-warnings --config .aider/plan.yml
 
 # Dev: passe un slug et travaille sur agent/<slug>
 # Usage: just agent-dev "healthz"
@@ -42,10 +42,10 @@ agent-dev SLUG: notes
   echo "SLUG: {{SLUG}}"
   echo ""
   echo "Consignes: exécute le plan dans notes/plan.md sur cette branche."
-  end | aider --config .aider/dev.yml
+  end | aider --no-show-model-warnings --config .aider/dev.yml
 
 agent-test: notes
-  cat .aider/prompts/test.md | aider --config .aider/test.yml
+  cat .aider/prompts/test.md | aider --no-show-model-warnings --config .aider/test.yml
 
 agent-review: notes
-  cat .aider/prompts/reviewer.md | aider --config .aider/review.yml
+  cat .aider/prompts/reviewer.md | aider --no-show-model-warnings --config .aider/review.yml
