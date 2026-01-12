@@ -176,6 +176,7 @@ async function processChatCompletion(body, apiKey, env) {
   }
 
   const responseData = await oneMinResponse.json();
+  console.log('DEBUG: 1min.ai response:', JSON.stringify(responseData, null, 2));
   const transformedResponse = transform1MinToOpenAI(responseData, promptTokens);
 
   return new Response(JSON.stringify(transformedResponse), {
