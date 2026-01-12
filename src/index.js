@@ -176,7 +176,7 @@ async function processChatCompletion(body, apiKey, env) {
   }
 
   const responseData = await oneMinResponse.json();
-  console.log('DEBUG: 1min.ai response:', JSON.stringify(responseData, null, 2));
+  // console.log('DEBUG: 1min.ai response:', JSON.stringify(responseData, null, 2));
   const transformedResponse = transform1MinToOpenAI(responseData, promptTokens);
 
   return new Response(JSON.stringify(transformedResponse), {
@@ -234,14 +234,15 @@ function transformOpenAITo1Min(openAIRequest, modelInfo) {
 
 function transform1MinToOpenAI(oneMinResponse, promptTokens = 0) {
   // Extract the response text from 1min AI format
-  const responseText = oneMinResponse.response || oneMinResponse.text || '';
+  // Based on official documentation: response is in aiRecord.aiRecordDetail.resultObject[0]
+  const responseText = oneMinResponse.aiRecord?.aiRecordDetail?.resultObject?.[0] || '';
   const completionTokens = calculateCompletionTokens(responseText);
 
   return {
     id: `chatcmpl-${Date.now()}`,
     object: 'chat.completion',
     created: Math.floor(Date.now() / 1000),
-    model: oneMinResponse.model || 'gpt-3.5-turbo',
+    model: oneMinResponse.aiRecord?.model,
     system_fingerprint: null,
     choices: [{
       index: 0,
