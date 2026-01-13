@@ -9,9 +9,6 @@ yarn-error.log*
 dist/
 wrangler.toml.bak
 
-# AI
-notes/
-
 # Environment variables
 .env
 .env.local
