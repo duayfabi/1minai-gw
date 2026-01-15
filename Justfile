@@ -123,6 +123,10 @@ agent-plan SLUG OBJECTIF: notes
 
   echo "✅ Brief créé: $brief"
 
+  # Création explicite du fichier cible
+  touch "$plan"
+  echo "✅ Fichier plan initialisé: $plan"
+
   tmp="$(mktemp)"
   trap 'rm -f "$tmp"' EXIT
   cat .aider/prompts/plan.md > "$tmp"
@@ -130,7 +134,7 @@ agent-plan SLUG OBJECTIF: notes
   printf "Version demandée: v1\nPlan à créer: %s\nBrief: %s\n\n" "$plan" "$brief" >> "$tmp"
   cat "$brief" >> "$tmp"
 
-  aider --config .aider/plan.yml --no-show-model-warnings --no-stream --no-restore-chat-history --yes --message-file "$tmp"
+  aider --config .aider/plan.yml --no-show-model-warnings --no-stream --no-restore-chat-history --yes "$plan" --message-file "$tmp"
 
 
 # --- Planner --- amend ---
@@ -182,6 +186,11 @@ agent-dev SLUG VERSION DATE="": notes
     date="$(date +%Y-%m-%d)"
   fi
 
+  if [ -n "$(git status --porcelain)" ]; then \
+      echo "❌ Le workspace n'est pas propre. Stashe ou commite tes changements."; \
+      exit 1; \
+  fi
+
   # Résoudre le fichier plan
   plan="notes/plans/${date}-{{SLUG}}-{{VERSION}}.md"
 
@@ -216,7 +225,7 @@ agent-fix SLUG DATE="":
     date="$(date +%Y-%m-%d)"
   fi
 
-  review_file=$(ls notes/reviews/${date}-{{SLUG}}.md | head -n 1)
+  review_file="notes/reviews/${date}-{{SLUG}}.md"
 
   if [ ! -f "$review_file" ]; then
     echo "❌ Aucune review trouvée."
@@ -281,32 +290,3 @@ agent-review SLUG: notes
     --message-file "$tmp_msg"
 
   echo "✅ Review créée: $out"
-
-
-# --- Tester ---
-[script]
-agent-test: notes 
-  echo "🧪 Lancement des tests pour analyse par l'IA..."
-  
-  # On capture la sortie des tests dans un fichier temporaire
-  tmp_log="$(mktemp)"
-  trap 'rm -f "$tmp_log"' EXIT
-  
-  # On lance les tests et on capture tout (stdout et stderr)
-  # On utilise || true pour ne pas arrêter le script si les tests échouent
-  just ci > "$tmp_log" 2>&1 || true
-  
-  echo "--- RÉSULTATS DES TESTS ---"
-  cat "$tmp_log"
-  echo "---------------------------"
-
-  # On donne le log d'erreur à Aider
-  # S'il y a des erreurs, il doit les corriger. 
-  # S'il n'y a pas d'erreurs, il doit simplement confirmer que tout est OK.
-  aider \
-    --config .aider/dev.yml \
-    --no-show-model-warnings \
-    --no-stream \
-    --yes \
-    . \
-    --message "Voici les résultats des tests (just ci). Si des tests échouent ou s'il y a des erreurs/warnings, corrige-les. Sinon, réponds juste 'OK'.
