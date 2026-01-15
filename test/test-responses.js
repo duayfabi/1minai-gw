@@ -14,7 +14,7 @@ async function testResponsesEndpoint() {
         'Authorization': `Bearer ${API_KEY}`
       },
       body: JSON.stringify({
-        model: 'gw/gpt-4o',
+        model: 'gpt-4o',
         instructions: 'You are a helpful assistant.',
         input: [
           { role: 'user', content: 'Say "Hello, Responses API!" and nothing else.' }
@@ -61,7 +61,7 @@ async function testResponsesStreaming() {
         'Authorization': `Bearer ${API_KEY}`
       },
       body: JSON.stringify({
-        model: 'gw/claude-3-5-sonnet-20241022',
+        model: 'claude-3-5-sonnet-20241022',
         instructions: 'You are a helpful assistant.',
         input: [
           'Count from 1 to 3.'

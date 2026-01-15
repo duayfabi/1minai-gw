@@ -7,7 +7,7 @@ layout {
         name "PLAN"
       }
 
-      // Colonne droite : DEV / REVIEW / TEST
+      // Colonne droite : DEV / REVIEW
       pane split_direction="horizontal" {
 
         // Ligne 1 : DEV (plus grand)
@@ -15,18 +15,10 @@ layout {
           name "DEV"
         }
 
-        // Ligne 2 : REVIEW + TEST
-        pane split_direction="vertical" {
-          pane {
-            name "REVIEW"
-            command "fish"
-            args "-lc" "just agent-review"
-          }
-          pane {
-            name "TEST/CI"
-            command "fish"
-            args "-lc" "just agent-test"
-          }
+        pane {
+          name "REVIEW"
+          command "fish"
+          args "-lc" "just agent-review"
         }
       }
     }
